@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>个人网页示例（调整版）</title>
+<style>
+  :root{
+    --bg:#000;
+    --accent:#2f5aa0;
+    --nav-pill:#8aa0e6;
+    --card-dark:#0f3b70;    /* 更深的外框蓝 */
+    --card-inner:#9fb0f1;   /* 浅蓝，作为封面占位 */
+    --text:#fff;
+    font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft Yahei", sans-serif;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);}
+  /* 背景画布固定在底层，避免阻挡交互 */
+  .bg-canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+  .container{
+    display:flex;
+    gap:40px;
+    padding:30px;
+    box-sizing:border-box;
+    min-height:100vh;
+    position:relative;
+    z-index:1; /* 内容在画布之上 */
+  }
+
+  /* 左侧区域（放大并往右偏移） */
+  .left{
+    width:480px;               /* 放大 */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    margin-right:120px;        /* 向右移动：调整这个值即可改变偏移量 */
+  }
+  .lyric{
+    text-align:center;
+    line-height:1.4;
+    font-size:18px;
+    color:#dfe6ff;
+  }
+  .lyric .jp{font-size:20px; font-weight:700; margin-bottom:6px;}
+  .lyric .cn{font-size:16px; color:#cbd3ff;}
+
+  /* 唱片区域 */
+  .record-wrap{
+    width:360px;
+    height:360px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  #record{
+    width:320px;
+    height:320px;
+    border-radius:50%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7), inset 0 -8px 30px rgba(0,0,0,0.35);
+    background-image: url('./assets/media/images/rolling.png');
+    background-size: cover;
+    background-position: center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:default;
+    transition:transform .2s;
+    position:relative;
+    overflow:hidden;
+  }
+  #record::after{
+    content:"";
+    position:absolute;
+    left:-25%;
+    top:-60%;
+    width:150%;
+    height:70%;
+    transform:rotate(-22deg);
+    background: linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04), transparent);
+    pointer-events:none;
+    mix-blend-mode:screen;
+  }
+  #label{
+    width:80px;height:80px;border-radius:50%;
+    background: linear-gradient(180deg,#f7f7fb,#d6d8ee);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:#222;font-weight:700;
+    box-shadow: inset 0 -4px 10px rgba(0,0,0,0.12);
+  }
+  @keyframes spin { from{ transform: rotate(0deg);} to{ transform: rotate(360deg);} }
+  .spin { animation: spin 10s linear infinite; } /* 10s 一圈 */
+
+  /* 个人描述（已按你提供内容修整格式）*/
+  .profile{
+    width:100%;
+    text-align:center;
+    color:#e6e9ff;
+    font-size:13px;
+    line-height:1.6;
+  }
+  .profile h3{ margin:8px 0 6px; font-size:18px; }
+  .profile p{ margin:6px 0; opacity:0.95; font-size:13px; color:#cbd3ff; }
+
+  /* 右侧区域 */
+  .right{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .nav{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  .nav .pill{
+    padding:10px 18px;
+    border-radius:20px;
+    background:var(--accent);
+    color:#eaf0ff;
+    cursor:pointer;
+    user-select:none;
+    font-weight:600;
+  }
+  .nav .pill.active{
+    background:var(--nav-pill);
+    color:#12203a;
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  .content-grid{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+
+  .list-view{
+    display:block;
+  }
+
+  .preview-view{
+    display:none;
+    background: rgba(47, 90, 160, 0.12);
+    border: 1px solid rgba(154, 184, 248, 0.16);
+    border-radius:12px;
+    padding:20px 24px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+    color:#f5f8ff;
+  }
+  .preview-view.active{ display:block; }
+  .preview-view header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  }
+
+  .back-btn{
+    background:rgba(138,160,230,0.22);
+    color:#d9e6ff;
+    border:1px solid rgba(154, 184, 248, 0.35);
+    padding:6px 16px;
+    border-radius:16px;
+    font-size:13px;
+    cursor:pointer;
+    transition:all .18s;
+  }
+  .back-btn:hover{
+    background:rgba(138,160,230,0.35);
+  }
+
+  .preview{
+    max-height:calc(100vh - 240px);
+    overflow:auto;
+  }
+  .preview h1{ color:#FFD700; }
+  .preview h2{ color:#FFCC00; }
+  .preview h3{ color:#FFA500; }
+  .preview p, .preview li{
+    color:#f5f8ff;
+    line-height:1.85;
+  }
+  .preview p{ margin:0 0 1.1em; }
+  .preview ul, .preview ol{ padding-left:1.4em; margin:0 0 1.1em; }
+  .preview strong{ color:#446CCF; }
+  .preview code{
+    background: rgba(140, 180, 255, 0.12);
+    color:#d0e6ff;
+    padding:2px 4px;
+    border-radius:4px;
+  }
+  .preview pre{
+    background: rgba(8, 24, 48, 0.55);
+    padding:12px;
+    border-radius:8px;
+    max-width:100%;
+    max-height:60vh;
+    overflow:auto;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    overflow-wrap:anywhere;
+  }
+  .preview pre code{
+    background:transparent;
+    color:#d8e9ff;
+    padding:0;
+  }
+  .preview img{
+    display:block;
+    max-width:100%;
+    height:auto;
+    border-radius:8px;
+    margin:8px 0 12px;
+  }
+  .preview code{
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+
+  /* 卡片（缩略）样式：外层深蓝框，内层浅蓝为封面占位。尺寸改小 */
+  .card-list{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:14px;
+    width:100%;
+  }
+  .card-frame{
+    background: var(--card-dark);
+    border-radius:10px;
+    padding:10px;
+    min-height:100px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.55);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    transition:transform .18s;
+    color: #eaf3ff;
+  }
+  .card-frame:hover{ transform: translateY(-6px); }
+  .card-inner{
+    height:60px;               /* 更小封面以缩短卡片 */
+    border-radius:6px;
+    background: var(--card-inner);
+    background-size:cover;
+    background-position:center;
+    margin-bottom:10px;
+  }
+  .card-meta .title{ font-size:15px; font-weight:700; margin-bottom:6px; color:#eaf3ff; }
+  .card-meta .excerpt{ font-size:13px; color: rgba(234,243,255,0.92); opacity:0.95; line-height:1.35; }
+
+
+
+  /* small helpers */
+  .muted{ color:#9fb0e9; font-size:12px; }
+  .center{ display:flex; justify-content:center; align-items:center; }
+  @media (max-width:980px){
+    .container{ flex-direction:column; align-items:center; padding:20px; }
+    .left{ width:100%; order:2; margin-right:0; transform:none; }
+    .right{ width:100%; order:1; }
+    .card-list{ grid-template-columns: repeat(1, 1fr); width:100%; }
+    .content-grid{ flex-direction:column; gap:16px; }
+    .preview{ max-height:none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 左侧 -->
+  <div class="left">
+    <div class="lyric">
+      <div class="jp" id="lyric-line">もう振りきったら目を開けて進んで</div>
+      <div class="cn" id="lyric-sub">如若回头 睁眼前进。</div>
+    </div>
+
+    <div class="record-wrap" title="唱片（自动旋转）">
+      <div id="record" aria-hidden="true">
+      </div>
+    </div>
+
+    <!-- 个人简介：已根据你提供的内容修复格式 -->
+    <div class="profile">
+      <h3>Luo Yin</h3>
+      <p>香港中文大学（深圳） — CSE大三在读</p>
+      <p class="muted">2025 腾讯全国开悟智能体决策赛道第五名</p>
+      <p class="muted">2025 阿里Qwen3-Coder挑战赛在2100支队伍中脱颖获最佳人气奖</p>
+
+      <p style="margin-top:10px; font-size:13px; color:#cbd3ff;">
+        此网站主要用于记录项目博客、科研记录以及一些
+      </p>
+      <p style="margin-top:6px; font-size:13px; color:#cbd3ff;">
+        “非常困难但绝对可行
+      </p>
+      <p style="margin-top:6px; font-size:13px; color:#cbd3ff;">
+        服务社会也具有教育意义
+      </p>
+      <p style="margin-top:6px; font-size:13px; color:#cbd3ff;">
+        知识有重点但应用无极限”
+      </p>
+      <p style="margin-top:6px; font-size:13px; color:#cbd3ff;">
+        的东西。
+      </p>
+      <p style="margin-top:6px; font-size:13px; color:#cbd3ff;">
+        大道晦兮非我欲兮 烂草起新居
+      </p>
+    </div>
+  </div>
+
+  <!-- 右侧 -->
+  <div class="right">
+    <div class="nav" role="tablist" aria-label="栏目导航">
+      <div class="pill active" data-cat="projects">项目</div>
+      <div class="pill" data-cat="contests">比赛</div>
+      <div class="pill" data-cat="research">科研</div>
+      <div class="pill" data-cat="internships">实习</div>
+      <div class="pill" data-cat="other">其他</div>
+    </div>
+
+    <div class="content-grid">
+      <div class="list-view" id="listView">
+        <div class="card-list" id="cardList"></div>
+      </div>
+      <section class="preview-view" id="previewWrap" aria-label="文章预览">
+        <header>
+          <button type="button" class="back-btn" id="backBtn">← 返回列表</button>
+        </header>
+        <article class="preview" id="preview"></article>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+/* 仅保留必要的数据与逻辑（歌词、缩略卡） */
+const lyricsUrl = './assets/data/lyrics.json';
+let lyricList = [];
+let lyricIndex = 0;
+let lyricTimer = null;
+const lyricDuration = 4000;
+
+const fallbackLyric = [{ ja:'もう振りきったら目を開けて進んで，', zh:'如若回头 睁眼前进，' }];
+
+// 从 index.json 动态读取文章清单
+const mdIndexUrl = './assets/articles/index.json';
+let mdIndex = [];
+let mdIdToPath = {};
+async function loadMdIndex(){
+  const r = await fetch(mdIndexUrl, { cache:'no-cache' });
+  if(!r.ok) throw new Error('加载目录失败');
+  const arr = await r.json();
+  mdIndex = Array.isArray(arr) ? arr : [];
+  mdIdToPath = {};
+  mdIndex.forEach(it=>{ if(it && it.id && it.path) mdIdToPath[it.id] = it.path; });
+}
+
+/* 左侧歌词（只显示日文+中文） */
+const lyricLine = document.getElementById('lyric-line');
+const lyricSub = document.getElementById('lyric-sub');
+
+function renderLyric(idx){
+  const list = lyricList.length ? lyricList : fallbackLyric;
+  const item = list[idx % list.length];
+  lyricLine.textContent = item?.ja || '';
+  lyricSub.textContent = item?.zh || '';
+}
+
+function startLyricRotation(){
+  if(lyricTimer) clearInterval(lyricTimer);
+  lyricTimer = setInterval(()=>{
+    if(!lyricList.length) return;
+    lyricIndex = (lyricIndex + 1) % lyricList.length;
+    renderLyric(lyricIndex);
+  }, lyricDuration);
+}
+
+async function initLyrics(){
+  try{
+    const res = await fetch(lyricsUrl, { cache:'no-cache' });
+    if(!res.ok) throw new Error('歌词加载失败');
+    const data = await res.json();
+    if(Array.isArray(data) && data.length){
+      lyricList = data;
+    }else{
+      lyricList = fallbackLyric;
+    }
+  }catch(err){
+    console.warn('歌词加载失败，使用默认文案。', err);
+    lyricList = fallbackLyric;
+  }
+  lyricIndex = 0;
+  renderLyric(lyricIndex);
+  startLyricRotation();
+}
+
+initLyrics();
+
+/* 唱片自动慢速旋转 */
+const record = document.getElementById('record');
+function startSpin(){ record.classList.add('spin'); }
+startSpin();
+
+/* 右侧：动态渲染卡片与 Markdown 视图 */
+const pills = document.querySelectorAll('.nav .pill');
+const cardList = document.getElementById('cardList');
+const listView = document.getElementById('listView');
+const previewWrap = document.getElementById('previewWrap');
+const preview = document.getElementById('preview');
+const backBtn = document.getElementById('backBtn');
+
+let currentCategory = 'projects';
+let currentArticleId = null;
+let isPreviewVisible = false;
+
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str).replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
+}
+
+function showListView(){
+  if(!listView || !previewWrap) return;
+  isPreviewVisible = false;
+  currentArticleId = null;
+  listView.style.display = 'block';
+  previewWrap.classList.remove('active');
+  preview.innerHTML = '';
+}
+
+function showPreviewView(){
+  if(!listView || !previewWrap) return;
+  isPreviewVisible = true;
+  listView.style.display = 'none';
+  previewWrap.classList.add('active');
+}
+
+function setActivePill(cat, options = {}){
+  const { updateHistory = true } = options;
+  currentCategory = cat;
+  pills.forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  renderCards(cat);
+  if(updateHistory){
+    const url = new URL(window.location.href);
+    url.searchParams.set('cat', cat);
+    url.searchParams.delete('article');
+    history.pushState({ category: cat }, '', url);
+  }
+}
+
+function renderCards(cat){
+  cardList.innerHTML = '';
+  const list = mdIndex.filter(it => it.category === cat);
+  if(list.length === 0){
+    cardList.innerHTML = `<div style="color:#cfe0ff;padding:8px;">此栏目暂无文章</div>`;
+    return;
+  }
+  list.forEach(item=>{
+    const frame = document.createElement('div');
+    frame.className = 'card-frame';
+    frame.tabIndex = 0;
+
+    const inner = document.createElement('div');
+    inner.className = 'card-inner';
+    const coverPath = item.cover || './assets/media/images/rolling.png';
+    inner.style.backgroundImage = `url('${coverPath}')`;
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+    const title = item.title || item.id;
+    const excerpt = item.excerpt || '';
+    meta.innerHTML = `<div class="title">${escapeHtml(title)}</div>
+                      <div class="excerpt">${escapeHtml(excerpt)}</div>`;
+
+    frame.appendChild(inner);
+    frame.appendChild(meta);
+
+    frame.addEventListener('click', ()=> openArticle(item.id));
+
+    cardList.appendChild(frame);
+  });
+}
+
+async function loadMarkdownById(id){
+  const path = mdIdToPath[id];
+  if(!path){
+    preview.innerHTML = `<div style="color:#cfe0ff;">此文章暂无 Markdown 文档。</div>`;
+    return;
+  }
+  preview.innerHTML = `<div style="color:#cfe0ff;">正在载入...</div>`;
+  try{
+    const r = await fetch(path, { cache:'no-cache' });
+    if(!r.ok) throw new Error('无法读取文档');
+    const md = await r.text();
+    const html = window.marked ? window.marked.parse(md) : md;
+    preview.innerHTML = html;
+    preview.scrollTop = 0;
+  }catch(err){
+    preview.innerHTML = `<div style="color:#f78;">文档加载失败</div>`;
+  }
+}
+
+function openArticle(id, options = {}){
+  const { pushState = true } = options;
+  const item = mdIndex.find(it => it.id === id);
+  if(!item){
+    preview.innerHTML = `<div style="color:#f78;">未找到该文章。</div>`;
+    showPreviewView();
+    return;
+  }
+  if(item.category && item.category !== currentCategory){
+    setActivePill(item.category, { updateHistory: false });
+  }
+  currentArticleId = id;
+  showPreviewView();
+  loadMarkdownById(id);
+  if(pushState){
+    const url = new URL(window.location.href);
+    url.searchParams.set('cat', currentCategory);
+    url.searchParams.set('article', id);
+    history.pushState({ category: currentCategory, articleId: id }, '', url);
+  }
+}
+
+function handleNavigationFromLocation(){
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('cat') || 'projects';
+  const articleId = params.get('article');
+  setActivePill(cat, { updateHistory: false });
+  if(articleId){
+    openArticle(articleId, { pushState: false });
+  }else{
+    showListView();
+  }
+}
+
+pills.forEach(p=> p.addEventListener('click', ()=>{
+  const cat = p.dataset.cat;
+  if(cat === currentCategory && !isPreviewVisible) return;
+  setActivePill(cat, { updateHistory: false });
+  showListView();
+  const url = new URL(window.location.href);
+  url.searchParams.set('cat', cat);
+  url.searchParams.delete('article');
+  history.pushState({ category: cat }, '', url);
+}));
+
+if(backBtn){
+  backBtn.addEventListener('click', ()=> history.back());
+}
+
+window.addEventListener('popstate', ()=> handleNavigationFromLocation());
+
+// 初始化顺序：加载索引 -> 根据 URL 状态渲染
+(async function initArticles(){
+  try{
+    await loadMdIndex();
+  }catch(e){
+    console.warn('Markdown 目录加载失败：', e);
+  }
+  handleNavigationFromLocation();
+  const params = new URLSearchParams(window.location.search);
+  const initCat = params.get('cat') || currentCategory;
+  const initArticle = params.get('article') || null;
+  const url = new URL(window.location.href);
+  url.searchParams.set('cat', initCat);
+  if(initArticle) url.searchParams.set('article', initArticle);
+  else url.searchParams.delete('article');
+  history.replaceState({ category: initCat, articleId: initArticle }, '', url);
+})();
+console.info('页面已更新：卡片视图与 Markdown 视图切换统一于中央区域。');
+</script>
+<!-- p5.js 背景动画：水母 -->
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js" defer></script>
+<script src="./assets/js/p5-jellyfish/sketch.js" defer></script>
+<!-- 音乐自动播放（失败则首个手势启动） -->
+<script src="./assets/js/audio/autoPlay.js" defer></script>
+<!-- Markdown 渲染（marked） -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "p1",
+    "title": "基于C#和Unity制作的一款独立游戏",
+    "category": "projects",
+    "path": "./assets/articles/hello.md",
+    "excerpt": "文字冒险avg游戏 已发布到itch.io 获关注500+",
+    "cover": "./assets/media/images/p1_1.png"
+  },
+  {
+    "id": "p2",
+    "title": "基于java制作的聊天室项目",
+    "category": "projects",
+    "path": "./assets/articles/vision-nav.md",
+    "excerpt": "socket编程实现多用户聊天",
+    "cover": "./assets/media/images/rolling.png"
+  },
+  {
+    "id": "c1",
+    "title": "2025腾讯智能体决策算法大赛",
+    "category": "contests",
+    "path": "./assets/articles/contest-final.md",
+    "excerpt": "第五名^^",
+    "cover": "./assets/media/images/rolling.png"
+  },
+  {
+    "id": "r1",
+    "title": "大模型进化算法在符号认知模型中的应用",
+    "category": "research",
+    "path": "./assets/articles/r1.md",
+    "excerpt": "分析论文《Discovering Symbolic Cognitive Models from Human and Animal Behavior》以及《Mathematical Discoveries from program search with large language models》",
+    "cover": "./assets/media/images/Pasted image 20251105144655.png"
+  },
+  {
+    "id": "i1",
+    "title": "实习：公司X 性能优化报告",
+    "category": "internships",
+    "path": "./assets/articles/internship-x.md",
+    "excerpt": "后端服务优化经验与指标提升。",
+    "cover": "./assets/media/images/rolling.png"
+  },
+  {
+    "id": "o1",
+    "title": "其他：读书笔记《深度学习导论》",
+    "category": "other",
+    "path": "./assets/articles/notes-dl.md",
+    "excerpt": "经典章节的要点与实践心得。",
+    "cover": "./assets/media/images/rolling.png"
+  }
+]
+
+
