@@ -17,11 +17,11 @@
   },
   {
     "id": "c1",
-    "title": "2025腾讯智能体决策算法大赛",
+    "title": "2025阿里qwen3-coder挑战赛作品：ADHD任务规划工具",
     "category": "contests",
-    "path": "./assets/articles/contest-final.md",
-    "excerpt": "第五名^^",
-    "cover": "./assets/media/images/rolling.png"
+    "path": "./assets/articles/c1.md",
+    "excerpt": "最佳人气奖^^",
+    "cover": "./assets/media/images/c1_1.jpg"
   },
   {
     "id": "r1",
