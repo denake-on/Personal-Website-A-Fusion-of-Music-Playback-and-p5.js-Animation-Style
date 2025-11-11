@@ -1,4 +1,5 @@
-# SpicaBlog Frontend
+# 静态可复刻的个人网站
+作品演示网址：https://lys-ten.vercel.app/?cat=projects
 <img width="2159" height="1238" alt="image" src="https://github.com/user-attachments/assets/e3d0f8d2-08f0-4fce-9b98-67aab017fd55" />
 <img width="1898" height="978" alt="屏幕截图 2025-11-11 013129" src="https://github.com/user-attachments/assets/f28da519-ff83-4afd-a521-462ee1c1d966" />
 
