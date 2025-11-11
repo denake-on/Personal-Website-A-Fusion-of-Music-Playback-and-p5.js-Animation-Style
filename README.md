@@ -1,6 +1,10 @@
 # SpicaBlog Frontend
+<img width="2159" height="1238" alt="image" src="https://github.com/user-attachments/assets/e3d0f8d2-08f0-4fce-9b98-67aab017fd55" />
+<img width="1898" height="978" alt="屏幕截图 2025-11-11 013129" src="https://github.com/user-attachments/assets/f28da519-ff83-4afd-a521-462ee1c1d966" />
+
 
 一个基于纯前端（HTML + CSS + JavaScript）的个人主页示例，用于展示项目、文章以及动态水母背景和歌词轮播等效果。
+
 
 ## 功能概览
 
