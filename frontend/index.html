@@ -224,6 +224,81 @@
     white-space:pre-wrap;
     word-break:break-word;
   }
+  
+  /* Enhanced syntax highlighting styles to work with Highlight.js */
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    color: #d8e9ff;
+    background: rgba(8, 24, 48, 0.7);
+    border-radius: 8px;
+  }
+  
+  pre .hljs {
+    padding: 12px;
+  }
+  
+  /* Override some default Highlight.js styles to match your theme */
+  .hljs-comment,
+  .hljs-quote {
+    color: #a0b0c0;
+    font-style: italic;
+  }
+  
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-meta-keyword,
+  .hljs-doctag,
+  .hljs-section {
+    color: #ff79c6;
+  }
+  
+  .hljs-attribute,
+  .hljs-name,
+  .hljs-regexp,
+  .hljs-link,
+  .hljs-type,
+  .hljs-selector-id,
+  .hljs-selector-class,
+  .hljs-number {
+    color: #bd93f9;
+  }
+  
+  .hljs-string,
+  .hljs-meta,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-literal,
+  .hljs-type,
+  .hljs-params,
+  .hljs-deletion {
+    color: #50fa7b;
+  }
+  
+  .hljs-title,
+  .hljs-section,
+  .hljs-function {
+    color: #f1fa8c;
+  }
+  
+  .hljs-symbol,
+  .hljs-bullet,
+  .hljs-addition {
+    color: #f1fa8c;
+  }
+  
+  .hljs-meta-string {
+    color: #8be9fd;
+  }
+  
+  .hljs-emphasis {
+    font-style: italic;
+  }
+  
+  .hljs-strong {
+    font-weight: bold;
+  }
 
   /* 卡片（缩略）样式：外层深蓝框，内层浅蓝为封面占位。尺寸改小 */
   .card-list{
@@ -359,6 +434,45 @@ async function loadMdIndex(){
   mdIndex = Array.isArray(arr) ? arr : [];
   mdIdToPath = {};
   mdIndex.forEach(it=>{ if(it && it.id && it.path) mdIdToPath[it.id] = it.path; });
+}
+
+// Configure Marked to use Highlight.js for syntax highlighting
+if (window.marked) {
+  const renderer = new marked.Renderer();
+  const originalCode = renderer.code;
+  renderer.code = function(code, infoString, escaped) {
+    // Use Highlight.js to highlight code if available
+    if (window.hljs) {
+      const lang = infoString ? infoString.split(/\s+/)[0] : '';
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          const highlighted = hljs.highlight(code, { language: lang }).value;
+          return `<pre><code class="hljs ${lang}">${highlighted}</code></pre>`;
+        } catch (e) {
+          console.warn('Highlight.js error:', e);
+        }
+      }
+      // If no language or highlighting failed, still apply hljs class for styling
+      return `<pre><code class="hljs">${this.options.highlight ? this.options.highlight(code, lang) : escapeHtml(code)}</code></pre>`;
+    }
+    // Fallback to original behavior if Highlight.js is not loaded
+    return originalCode.call(this, code, infoString, escaped);
+  };
+  
+  // Set the custom renderer
+  marked.setOptions({
+    renderer: renderer,
+    highlight: function(code, lang) {
+      if (lang && window.hljs) {
+        try {
+          return hljs.highlight(code, { language: lang }).value;
+        } catch (e) {
+          console.warn('Syntax highlighting error:', e);
+        }
+      }
+      return code;
+    }
+  });
 }
 
 /* 左侧歌词（只显示日文+中文） */
@@ -500,6 +614,15 @@ async function loadMarkdownById(id){
     const html = window.marked ? window.marked.parse(md) : md;
     preview.innerHTML = html;
     preview.scrollTop = 0;
+    
+    // If Highlight.js is available, highlight any unhighlighted code blocks
+    if (window.hljs) {
+      preview.querySelectorAll('pre code').forEach(block => {
+        if (!block.classList.contains('hljs')) {
+          hljs.highlightElement(block);
+        }
+      });
+    }
   }catch(err){
     preview.innerHTML = `<div style="color:#f78;">文档加载失败</div>`;
   }
@@ -582,5 +705,8 @@ console.info('页面已更新：卡片视图与 Markdown 视图切换统一于�
 <script src="./assets/js/audio/autoPlay.js" defer></script>
 <!-- Markdown 渲染（marked） -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+<!-- Syntax highlighting (highlight.js) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js" defer></script>
 </body>
 </html>
