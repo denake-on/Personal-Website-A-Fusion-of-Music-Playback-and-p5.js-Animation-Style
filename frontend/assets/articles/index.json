@@ -41,10 +41,10 @@
   },
   {
     "id": "o1",
-    "title": "其他：读书笔记《深度学习导论》",
+    "title": "操作系统中的I/O管理机制分析",
     "category": "other",
-    "path": "./assets/articles/notes-dl.md",
-    "excerpt": "经典章节的要点与实践心得。",
+    "path": "./assets/articles/o1.md",
+    "excerpt": "深入探讨操作系统如何高效管理输入输出操作。",
     "cover": "./assets/media/images/rolling.png"
   }
 ]
