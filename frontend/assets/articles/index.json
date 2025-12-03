@@ -45,7 +45,15 @@
     "category": "other",
     "path": "./assets/articles/o1.md",
     "excerpt": "深入探讨操作系统如何高效管理输入输出操作。",
-    "cover": "./assets/media/images/rolling.png"
+    "cover": "./assets/media/images/os_cover.jpg"
+  },
+  {
+    "id": "o2",
+    "title": "操作系统中的的虚拟内存管理1",
+    "category": "other",
+    "path": "./assets/articles/o2.md",
+    "excerpt": "深入探讨操作系统如何高效管理虚拟内存。",
+    "cover": "./assets/media/images/os_cover.jpg"
   }
 ]
 
