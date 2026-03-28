@@ -17,6 +17,7 @@
 
   let jellyfishes = [];
   let canvas;
+  let bgImg;
 
   class Jellyfish {
     constructor(p, options) {
@@ -112,9 +113,9 @@
     p.setup = function () {
       const cnv = p.createCanvas(p.windowWidth, p.windowHeight);
       canvas = cnv;
-      // as fixed background
       cnv.addClass('bg-canvas');
-      p.background(0);
+      bgImg = p.loadImage('./assets/media/background/bg.jpg');
+      p.background(bgImg);
       p.noFill();
       p.stroke(CONFIG.baseStroke.r, CONFIG.baseStroke.g, CONFIG.baseStroke.b, CONFIG.baseStroke.a);
       p.strokeWeight(1.2);
@@ -122,8 +123,12 @@
     };
 
     p.draw = function () {
-      // clear every frame (no trail)
-      p.background(0);
+      // draw background image every frame
+      if (bgImg) p.image(bgImg, 0, 0, p.width, p.height);
+      // semi-transparent black overlay for readability
+      p.fill(0, 0, 0, 100);
+      p.noStroke();
+      p.rect(0, 0, p.width, p.height);
 
       // update and render all jellyfish
       for (let i = 0; i < jellyfishes.length; i++) {
@@ -134,8 +139,6 @@
 
     p.windowResized = function () {
       p.resizeCanvas(p.windowWidth, p.windowHeight);
-      // keep trails smooth after resize
-      p.background(0);
       // reinit to distribute nicely in new viewport
       initSwarm(p);
     };
