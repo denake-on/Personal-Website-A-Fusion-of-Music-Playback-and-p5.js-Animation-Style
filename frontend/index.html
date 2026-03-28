@@ -603,6 +603,7 @@ function renderCards(cat){
 
 // GitHub 仓库基础路径
 const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/articles';
+const GITHUB_IMAGE_BASE = 'https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/assets/media/images';
 
 async function loadMarkdownById(id){
   const localPath = mdIdToPath[id];
@@ -620,7 +621,12 @@ async function loadMarkdownById(id){
     if(!r.ok) throw new Error('无法读取文档');
     const md = await r.text();
     const html = window.marked ? window.marked.parse(md) : md;
-    preview.innerHTML = html;
+    // 替换图片路径：把 ./assets/media/images/xxx 替换为 GitHub 远程路径
+    const processedHtml = html.replace(
+      /\.\/assets\/media\/images\/([^"'\)]+)/g,
+      `${GITHUB_IMAGE_BASE}/$1`
+    );
+    preview.innerHTML = processedHtml;
     preview.scrollTop = 0;
 
     // If Highlight.js is available, highlight any unhighlighted code blocks
