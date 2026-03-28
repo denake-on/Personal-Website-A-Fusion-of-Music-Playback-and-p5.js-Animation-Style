@@ -1,6 +1,14 @@
-[
+[  
   {
     "id": "p1",
+    "title": "医学问答强化学习：基于 veRL 框架的 GRPO 算法全参数微调",
+    "category": "projects",
+    "path": "./assets/articles/p1.md",
+    "excerpt": "a800单卡|全参数微调|医学问答强化学习|veRL框架|GRPO算法",
+    "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/p1_2.png"
+  },
+  {
+    "id": "p2",
     "title": "基于C#和Unity制作的一款独立游戏",
     "category": "projects",
     "path": "./assets/articles/hello.md",
@@ -8,7 +16,7 @@
     "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/p1_1.png"
   },
   {
-    "id": "p2",
+    "id": "p3",
     "title": "基于java制作的聊天室项目",
     "category": "projects",
     "path": "./assets/articles/vision-nav.md",
