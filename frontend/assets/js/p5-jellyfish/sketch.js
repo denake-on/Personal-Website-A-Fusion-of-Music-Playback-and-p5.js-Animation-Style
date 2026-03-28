@@ -5,10 +5,10 @@
 
   // Config
   const CONFIG = {
-    minJellyfish: 4,
-    maxJellyfish: 7,
+    minJellyfish: 1,
+    maxJellyfish: 2,
     // Rendering density: number of points per jellyfish each frame
-    baseSamples: 4200,
+    baseSamples: 2500,
     // Trail opacity for the fading background (0-255)
     trailAlpha: 28,
     // Global stroke base color (blue-ish)
