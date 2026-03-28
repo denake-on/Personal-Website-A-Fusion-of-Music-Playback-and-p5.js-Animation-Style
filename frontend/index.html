@@ -601,21 +601,28 @@ function renderCards(cat){
   });
 }
 
+// GitHub 仓库基础路径
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/articles';
+
 async function loadMarkdownById(id){
-  const path = mdIdToPath[id];
-  if(!path){
+  const localPath = mdIdToPath[id];
+  if(!localPath){
     preview.innerHTML = `<div style="color:#cfe0ff;">此文章暂无 Markdown 文档。</div>`;
     return;
   }
+  // 将本地路径 ./assets/articles/xxx.md 转换为 GitHub 远程路径
+  const filename = localPath.replace('./assets/articles/', '');
+  const remoteUrl = `${GITHUB_RAW_BASE}/${filename}`;
+
   preview.innerHTML = `<div style="color:#cfe0ff;">正在载入...</div>`;
   try{
-    const r = await fetch(path, { cache:'no-cache' });
+    const r = await fetch(remoteUrl, { cache:'no-cache' });
     if(!r.ok) throw new Error('无法读取文档');
     const md = await r.text();
     const html = window.marked ? window.marked.parse(md) : md;
     preview.innerHTML = html;
     preview.scrollTop = 0;
-    
+
     // If Highlight.js is available, highlight any unhighlighted code blocks
     if (window.hljs) {
       preview.querySelectorAll('pre code').forEach(block => {
