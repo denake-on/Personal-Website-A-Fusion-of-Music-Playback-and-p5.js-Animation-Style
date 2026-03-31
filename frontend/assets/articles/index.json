@@ -41,11 +41,11 @@
   },
   {
     "id": "i1",
-    "title": "实习：公司X 性能优化报告",
+    "title": "结合医学知识库与城投公司数据资产的医疗养老RAG系统",
     "category": "internships",
-    "path": "./assets/articles/internship-x.md",
-    "excerpt": "后端服务优化经验与指标提升。",
-    "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/rolling.png"
+    "path": "./assets/articles/i1.md",
+    "excerpt": "实现多向量混合搜索，解决历史对话上下文过长问题",
+    "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/Pasted image 20260331221449.png"
   },
   {
     "id": "o1",
