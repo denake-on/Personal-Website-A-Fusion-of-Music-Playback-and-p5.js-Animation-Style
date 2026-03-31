@@ -148,11 +148,11 @@
 
   .preview-view{
     display:none;
-    background: rgba(47, 90, 160, 0.12);
-    border: 1px solid rgba(154, 184, 248, 0.16);
+    background: rgba(15, 30, 70, 0.7);
+    border: 1px solid rgba(154, 184, 248, 0.25);
     border-radius:12px;
     padding:20px 24px;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.5);
     color:#f5f8ff;
   }
   .preview-view.active{ display:block; }
@@ -197,13 +197,13 @@
     color:#e8f0ff;
     padding:2px 6px;
     border-radius:4px;
-    font-size:14px;
-    font-family: "Fira Code", "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    font-size:13px;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
   }
   .preview pre{
-    background: #1a1a2e;
+    background: #000;
     border: 1px solid rgba(100, 130, 200, 0.2);
-    padding:14px 16px;
+    padding:16px 20px;
     border-radius:10px;
     max-width:100%;
     max-height:60vh;
@@ -211,17 +211,44 @@
     white-space:pre-wrap;
     word-wrap:break-word;
     overflow-wrap:anywhere;
+    line-height:1.7;
   }
   .preview pre code{
     background:transparent;
     color:#e8f0ff;
     padding:0;
-    font-size:14px;
-    font-family: "Fira Code", "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    font-size:13px;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+    letter-spacing:0;
+    line-height:1.7;
   }
   /* LaTeX 公式样式 */
   .preview .katex { font-size: 1.15em; }
   .preview .katex-display { margin: 1em 0; overflow-x: auto; overflow-y: hidden; }
+
+  /* 表格样式 */
+  .preview table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1em 0;
+    font-size:14px;
+    color:#f0f4ff;
+  }
+  .preview th{
+    background:rgba(47,90,160,0.5);
+    color:#eaf0ff;
+    font-weight:600;
+    padding:10px 14px;
+    text-align:left;
+    border:1px solid rgba(100,130,200,0.3);
+  }
+  .preview td{
+    padding:8px 14px;
+    border:1px solid rgba(100,130,200,0.2);
+    background:rgba(15,27,60,0.6);
+    color:#d0d8f0;
+  }
+  .preview tr:hover td{ background:rgba(47,90,160,0.25); }
 
   .preview img{
     display:block;
@@ -239,12 +266,14 @@
   .hljs {
     display: block;
     overflow-x: auto;
-    padding: 0.5em;
+    padding: 0;
     color: #e8f0ff;
     background: transparent;
     border-radius: 0;
-    font-size:14px;
-    font-family: "Fira Code", "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    font-size:13px;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+    line-height: 1.7;
+    letter-spacing: 0;
   }
 
   pre .hljs {
@@ -470,20 +499,12 @@ if (window.marked) {
     // Fallback to original behavior if Highlight.js is not loaded
     return originalCode.call(this, code, infoString, escaped);
   };
-  
-  // Set the custom renderer
-  marked.setOptions({
+
+  // Set the custom renderer, enable GFM tables
+  marked.use({
     renderer: renderer,
-    highlight: function(code, lang) {
-      if (lang && window.hljs) {
-        try {
-          return hljs.highlight(code, { language: lang }).value;
-        } catch (e) {
-          console.warn('Syntax highlighting error:', e);
-        }
-      }
-      return code;
-    }
+    gfm: true,
+    breaks: false,
   });
 }
 
