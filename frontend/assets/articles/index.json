@@ -31,6 +31,14 @@
     "excerpt": "最佳人气奖^^",
     "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/c1_1.jpg"
   },
+    {
+    "id": "c2",
+    "title": "2025腾讯开悟全球算法大赛：智能交通信号灯控制",
+    "category": "contests",
+    "path": "./assets/articles/c2.md",
+    "excerpt": "第五名^^",
+    "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/c2_1.png"
+  },
   {
     "id": "r1",
     "title": "大模型进化算法在符号认知模型中的应用",
