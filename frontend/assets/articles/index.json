@@ -8,22 +8,6 @@
     "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/p1_2.png"
   },
   {
-    "id": "p2",
-    "title": "基于C#和Unity制作的一款独立游戏",
-    "category": "projects",
-    "path": "./assets/articles/hello.md",
-    "excerpt": "文字冒险avg游戏 已发布到itch.io 获关注500+",
-    "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/p1_1.png"
-  },
-  {
-    "id": "p3",
-    "title": "基于java制作的聊天室项目",
-    "category": "projects",
-    "path": "./assets/articles/vision-nav.md",
-    "excerpt": "socket编程实现多用户聊天",
-    "cover": "https://raw.githubusercontent.com/denake-on/article-for-personal-website/main/images/rolling.png"
-  },
-  {
     "id": "c1",
     "title": "2025阿里qwen3-coder挑战赛作品：ADHD任务规划工具",
     "category": "contests",
